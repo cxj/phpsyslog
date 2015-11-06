@@ -43,3 +43,10 @@ $logger->debug("This is a debug level message.");
 
 ?>
 ```
+
+## Contributing
+
+Pull requests are welcome!
+
+Requests which follow the PSR-1 and PSR-2 coding and style standards, and which
+have PHPUnit test coverage will get most attention.
