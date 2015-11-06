@@ -11,7 +11,7 @@ This class requires PHP 5.4 or later, but we recommend using the latest availabl
 It is installable and autoloadable via Composer as [cxj/phpsyslog](https://packagist.org/packages/cxj/phpsyslog)
 from [Packagist](https://packagist.org/).
 
-Alternatively, [download a release](https://github.com/cxj/phpsylog/releases) from GitHub, or clone this repository.  Then require or include its _autoload.php_ file.
+Alternatively, [download a release](https://github.com/cxj/phpsyslog/releases)from GitHub, or clone this repository.  Then require or include its _autoload.php_ file.
 
 ## Quality
 
