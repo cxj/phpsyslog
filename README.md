@@ -6,9 +6,10 @@ logger implementation that logs to a
 
 ## Installation
 
-This class requires PHP 5.4 or later, but we recommend using the latest available version of PHP as a matter of principle.  It has two dependencies, the [FIG] PSR-3 interface, linked above, and [IcecaveStudios/isolater] which is used to isolate global functions to make them more easily tested.
+This class requires PHP 5.4 or later, but we recommend using the latest available version of PHP as a matter of principle.  It has two dependencies, the [FIG](http://www.php-fig.org) PSR-3 interface, linked above, and [IcecaveStudios/isolater](https://github.com/IcecaveStudios/isolator) which is used to isolate global functions to make them more easily tested.
 
-It is installable and autoloadable via Composer as [cxj/phpsyslog] from [Packagist](https://packagist.org/).
+It is installable and autoloadable via Composer as [cxj/phpsyslog](https://packagist.org/packages/cxj/phpsyslog)
+from [Packagist](https://packagist.org/).
 
 Alternatively, [download a release](https://github.com/cxj/phpsylog/release) from GitHub, or clone this repository.  Then require or include its _autoload.php_ file.
 
