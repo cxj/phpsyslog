@@ -189,4 +189,40 @@ class LoggerTest extends \PHPUnit_Framework_TestCase
 
         $this->logger->debug('Test debug message');
     }
+
+    public function testFacility()
+    {
+        $this->logger->setFacility(LOG_USER);
+        $this->assertEquals(LOG_USER, $this->logger->getFacility());
+    }
+
+    public function testIdent()
+    {
+        $this->logger->setIdent("ProgramName");
+        $this->assertEquals("ProgramName", $this->logger->getIdent());
+    }
+
+    public function testMinimumLogLevel()
+    {
+        $this->logger->setMinimumLogLevel("alert");
+
+        $this->assertEquals(
+            $this->levels["alert"],
+            $this->logger->getMinimumLogLevel()
+        );
+
+        $this->assertEquals(
+            "alert",
+            $this->logger->getMinimumLogLevelString()
+        );
+    }
+
+    public function testOptions()
+    {
+        $this->logger->setOptions(LOG_PID|LOG_NDELAY|LOG_PERROR);
+        $this->assertEquals(
+            LOG_PID|LOG_NDELAY|LOG_PERROR,
+            $this->logger->getOptions()
+        );
+    }
 }

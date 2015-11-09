@@ -6,8 +6,7 @@
  *
  * @see https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md
  *
- * Created: 10/26/15 9:51 PM
- * $Id$
+ * @author Chris Johnson
  */
 
 namespace Cxj;
@@ -24,9 +23,10 @@ class Logger extends AbstractLogger
 {
     use IsolatorTrait;
 
-    const LOG_OPTIONS = LOG_NDELAY | LOG_PID;   // todo paramterize
-    const LOG_FACILITY = LOG_LOCAL7;            // todo paramterize
+    const LOG_OPTIONS = LOG_NDELAY | LOG_PID; // default if not provided.
+    const LOG_FACILITY = LOG_LOCAL7; // default if not provided.
 
+    // Map LogLevel strings to integers required by syslog().
     private static $levels = [
         LogLevel::EMERGENCY => 0,
         LogLevel::ALERT     => 1,
@@ -39,10 +39,22 @@ class Logger extends AbstractLogger
     ];
 
     // syslog() controls:
+    /**
+     * @var int
+     */
     private $options; // initialized in constructor.
+    /**
+     * @var int
+     */
     private $facility; // initialized in constructor.
-    private $minimumLogLevel; // initialized in constructor params.
-    private $ident;
+    /**
+     * @var int
+     */
+    private $minimumLogLevel; // initialized in constructor.
+    /**
+     * @var null|string
+     */
+    private $ident; // initialized in constructor.
 
     // miscellaneous properties:
     private $isInit;
@@ -52,18 +64,21 @@ class Logger extends AbstractLogger
      * CONSTRUCTOR
      *
      * @param string $ident - usually program name, defaults to null.
-     * @param string $minimumLogLevel
+     * @param string $minimumLogLevel - log only messages with >= this value.
+     * @param int $options - see openlog() syslog options.
+     * @param int $facility - see openlog() syslog facility.
      */
     public function __construct(
         $ident = null,
-        $minimumLogLevel = LogLevel::DEBUG
+        $minimumLogLevel = LogLevel::DEBUG,
+        $options = self::LOG_OPTIONS,
+        $facility = self::LOG_FACILITY
     )
     {
-        $this->options  = self::LOG_OPTIONS;
-        $this->facility = self::LOG_FACILITY;
-
         $this->ident           = $ident;
         $this->minimumLogLevel = self::$levels[$minimumLogLevel];
+        $this->options         = $options;
+        $this->facility        = $facility;
     }
 
     /**
@@ -78,15 +93,19 @@ class Logger extends AbstractLogger
     public function log($level, $message, array $context = [])
     {
         if (self::$levels[$level] > $this->minimumLogLevel) {
-            return;
+            return true;
         }
-        $iso = $this->isolator();
-        $this->init();
 
-        $iso->syslog(
-            self::$levels[$level],
-            $this->substitutePlaceholders($message, $context)
-        );
+        if ($this->init()) {
+            $iso = $this->isolator();
+
+            return $iso->syslog(
+                self::$levels[$level],
+                $this->substitutePlaceholders($message, $context)
+            );
+        }
+
+        return false; // init() failed.
     }
 
     /**
@@ -124,5 +143,82 @@ class Logger extends AbstractLogger
             $replacements['{' . $key . '}'] = $value;
         }
         return strtr($message, $replacements);
+    }
+
+    /**
+     * @param int $facility
+     */
+    public function setFacility($facility)
+    {
+        $this->facility = $facility;
+    }
+
+    /**
+     * @return int
+     */
+    public function getFacility()
+    {
+        return $this->facility;
+    }
+
+    /**
+     * @param null|string $ident
+     */
+    public function setIdent($ident)
+    {
+        $this->ident = $ident;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getIdent()
+    {
+        return $this->ident;
+    }
+
+    /**
+     * @param mixed
+     */
+    public function setMinimumLogLevel($minimumLogLevel)
+    {
+        if (is_string($minimumLogLevel)) {
+            $this->minimumLogLevel = self::$levels[$minimumLogLevel];
+        }
+        else if (is_integer($minimumLogLevel)) {
+            $this->minimumLogLevel = $minimumLogLevel;
+        }
+    }
+
+    /**
+     * @return int
+     */
+    public function getMinimumLogLevel()
+    {
+        return $this->minimumLogLevel;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMinimumLogLevelString()
+    {
+        return array_search($this->minimumLogLevel, self::$levels);
+    }
+
+    /**
+     * @param int $options
+     */
+    public function setOptions($options)
+    {
+        $this->options = $options;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOptions()
+    {
+        return $this->options;
     }
 }
