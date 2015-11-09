@@ -26,8 +26,6 @@ This package is unit tested using [PHPUnit](https://phpunit.de).
 
 ## Usage
 
-In the current version, you may want to edit the class constants (or derive your own class and override them) which define the log options and the syslog facility.
-
 Example usage:
 ```php
 <?php
