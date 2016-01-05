@@ -23,8 +23,11 @@ class Logger extends AbstractLogger
 {
     use IsolatorTrait;
 
-    const LOG_OPTIONS = LOG_NDELAY | LOG_PID; // default if not provided.
-    const LOG_FACILITY = LOG_LOCAL7; // default if not provided.
+    /**
+     * Default values used if not provided in constructor or via setters.
+     */
+    const LOG_OPTIONS = LOG_PID;
+    const LOG_FACILITY = LOG_USER;
 
     // Map LogLevel strings to integers required by syslog().
     private static $levels = [
