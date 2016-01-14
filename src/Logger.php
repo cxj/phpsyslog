@@ -91,7 +91,7 @@ class Logger extends AbstractLogger
      * @param string $message The message to log.
      * @param array $context Additional contextual information.
      *
-     * @return null
+     * @return boolean true success | false failure.
      */
     public function log($level, $message, array $context = [])
     {
