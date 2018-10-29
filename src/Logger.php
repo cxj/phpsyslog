@@ -1,12 +1,11 @@
 <?php
 /**
- * @file Logger.php
- *
  * A simple PSR-3 logger implementation that outputs to syslog.
  *
  * @see https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md
  *
  * @author Chris Johnson
+ * @package cxj/phpsyslog
  */
 
 namespace Cxj;
@@ -29,7 +28,10 @@ class Logger extends AbstractLogger
     const LOG_OPTIONS = LOG_PID;
     const LOG_FACILITY = LOG_USER;
 
-    // Map LogLevel strings to integers required by syslog().
+    /**
+     * Map LogLevel strings to integers required by syslog().
+     * @var array
+     */
     private static $levels = [
         LogLevel::EMERGENCY => 0,
         LogLevel::ALERT     => 1,
@@ -43,23 +45,30 @@ class Logger extends AbstractLogger
 
     // syslog() controls:
     /**
+     * See openlog() syslog options.
      * @var int
      */
     private $options; // initialized in constructor.
     /**
+     * See openlog() syslog facilities.
      * @var int
      */
     private $facility; // initialized in constructor.
     /**
+     * Lowest level priority of messages to log.
      * @var int
      */
     private $minimumLogLevel; // initialized in constructor.
     /**
+     * Identifier.
      * @var null|string
      */
     private $ident; // initialized in constructor.
 
-    // miscellaneous properties:
+    /**
+     * Has syslog connection and configuration been initialized?
+     * @var boolean
+     */
     private $isInit;
 
 
@@ -149,6 +158,7 @@ class Logger extends AbstractLogger
     }
 
     /**
+     * Setter.
      * @param int $facility
      */
     public function setFacility($facility)
@@ -157,6 +167,7 @@ class Logger extends AbstractLogger
     }
 
     /**
+     * Getter.
      * @return int
      */
     public function getFacility()
@@ -165,6 +176,7 @@ class Logger extends AbstractLogger
     }
 
     /**
+     * Setter.
      * @param null|string $ident
      */
     public function setIdent($ident)
@@ -173,6 +185,7 @@ class Logger extends AbstractLogger
     }
 
     /**
+     * Getter.
      * @return null|string
      */
     public function getIdent()
@@ -181,6 +194,7 @@ class Logger extends AbstractLogger
     }
 
     /**
+     * Setter.
      * @param mixed
      */
     public function setMinimumLogLevel($minimumLogLevel)
@@ -194,6 +208,7 @@ class Logger extends AbstractLogger
     }
 
     /**
+     * Getter.
      * @return int
      */
     public function getMinimumLogLevel()
@@ -202,6 +217,7 @@ class Logger extends AbstractLogger
     }
 
     /**
+     * Getter.
      * @return mixed
      */
     public function getMinimumLogLevelString()
@@ -210,6 +226,7 @@ class Logger extends AbstractLogger
     }
 
     /**
+     * Setter.
      * @param int $options
      */
     public function setOptions($options)
@@ -218,6 +235,7 @@ class Logger extends AbstractLogger
     }
 
     /**
+     * Getter.
      * @return int
      */
     public function getOptions()
