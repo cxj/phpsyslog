@@ -1,9 +1,6 @@
 <?php
 /**
  * @file LoggerTest.php
- *
- * Created: 10/27/15 8:40 AM
- * $Id$
  */
 
 namespace Cxj;
@@ -17,7 +14,7 @@ use Psr\Log\LogLevel;
  * @mixin \Icecave\Isolator\Isolator
  * @mixin \Cxj\Logger
  */
-class LoggerTest extends \PHPUnit_Framework_TestCase
+class LoggerTest extends \PHPUnit\Framework\TestCase
 {
     public function setUp()
     {
