@@ -20,6 +20,8 @@ class LoggerTest extends TestCase
 
     private MockObject $openlog;
     private MockObject $syslog;
+    private Logger $logger;
+    private array $levels;
 
     public function setUp(): void
     {
