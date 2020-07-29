@@ -6,19 +6,20 @@
 namespace Cxj;
 
 use phpmock\phpunit\PHPMock;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
 
 
 /**
- * @property mixed isolator
  * @mixin Logger
  */
-class LoggerTest extends \PHPUnit\Framework\TestCase
+class LoggerTest extends TestCase
 {
     use PHPMock;
 
-    private $openlog;
-    private $syslog;
+    private MockObject $openlog;
+    private MockObject $syslog;
 
     public function setUp(): void
     {
@@ -26,6 +27,7 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
         $this->openlog->expects($this->any())->willReturn(true);
 
         $this->syslog = $this->getFunctionMock(__NAMESPACE__, "syslog");
+        $this->syslog->expects($this->any())->willReturn(true);
 
         $this->logger = new Logger(__FILE__, LogLevel::DEBUG);
 
