@@ -1,34 +1,39 @@
 {
     "name": "cxj/phpsyslog",
+    "type": "library",
     "description": "Simple PSR-3 logger implementation that outputs to syslog",
     "keywords": [
         "syslog",
         "PSR-3"
     ],
     "homepage": "https://github.com/cxj/phpsyslog",
-    "type": "library",
     "license": "MIT",
     "authors": [
         {
             "name": "Chris Johnson"
         }
     ],
-
-    "autoload": {
-        "psr-4": {
-            "Cxj\\": "src/"
-        }
-    },
-
     "require": {
-        "php": ">=5.4",
-        "psr/log": "^1.0",
-        "icecave/isolator": "~2|~3"
+        "php": ">=7.4",
+        "icecave/isolator": "~2 || ~3",
+        "psr/log": "^1.0"
     },
-
+    "require-dev": {
+        "ergebnis/composer-normalize": "^2.6",
+        "php-mock/php-mock-phpunit": "^2.6",
+        "phpstan/phpstan": "^0.12",
+        "phpstan/phpstan-phpunit": "^0.12",
+        "phpunit/phpunit": "^9.1",
+        "roave/security-advisories": "dev-master"
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "1.0.x-dev"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Cxj\\": "src/"
         }
     }
 }
