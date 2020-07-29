@@ -15,8 +15,7 @@
     ],
     "require": {
         "php": ">=7.4",
-        "icecave/isolator": "~2 || ~3",
-        "psr/log": "^1.0"
+        "psr/log": "^1"
     },
     "require-dev": {
         "ergebnis/composer-normalize": "^2.6",
