@@ -10,7 +10,6 @@
 
 namespace Cxj;
 
-use Icecave\Isolator\IsolatorTrait;
 use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;
 
@@ -20,8 +19,6 @@ use Psr\Log\LogLevel;
  */
 class Logger extends AbstractLogger
 {
-    use IsolatorTrait;
-
     /**
      * Default values used if not provided in constructor or via setters.
      */
@@ -109,9 +106,7 @@ class Logger extends AbstractLogger
         }
 
         if ($this->init()) {
-            $iso = $this->isolator();
-
-            return $iso->syslog(
+            return syslog(
                 self::$levels[$level],
                 $this->substitutePlaceholders($message, $context)
             );
@@ -130,9 +125,7 @@ class Logger extends AbstractLogger
         if (!$this->isInit) {
             $this->isInit = true;
 
-            $iso = $this->isolator();
-
-            return $iso->openlog($this->ident, $this->options, $this->facility);
+            return openlog($this->ident, $this->options, $this->facility);
         }
         return true;
     }

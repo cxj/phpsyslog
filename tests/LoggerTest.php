@@ -5,29 +5,29 @@
 
 namespace Cxj;
 
+use phpmock\phpunit\PHPMock;
 use Psr\Log\LogLevel;
-
 
 
 /**
  * @property mixed isolator
- * @mixin \Icecave\Isolator\Isolator
- * @mixin \Cxj\Logger
+ * @mixin Logger
  */
 class LoggerTest extends \PHPUnit\Framework\TestCase
 {
+    use PHPMock;
+
+    private $openlog;
+    private $syslog;
+
     public function setUp(): void
     {
-        $this->isolator = $this->getMockBuilder('Icecave\Isolator\Isolator')
-            ->setMethods(array('openlog', 'syslog'))
-            ->getMock();
+        $this->openlog = $this->getFunctionMock(__NAMESPACE__, "openlog");
+        $this->openlog->expects($this->any())->willReturn(true);
 
-        $this->isolator->method('openlog')->willReturn(true);
-        $this->isolator->method('syslog')->willReturn($this->returnArgument(1));
+        $this->syslog = $this->getFunctionMock(__NAMESPACE__, "syslog");
 
         $this->logger = new Logger(__FILE__, LogLevel::DEBUG);
-
-        $this->logger->setIsolator($this->isolator);
 
         $this->levels = [
             LogLevel::EMERGENCY => 0,
@@ -43,9 +43,8 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
 
     public function testLogWithPlaceholderValues(): void
     {
-        $this->isolator
+        $this->syslog
             ->expects($this->once())
-            ->method('syslog')
             ->with(
                 $this->equalTo($this->levels[LogLevel::INFO]),
                 $this->equalTo('Foo: FOO, F: F, Missing: {missing}')
@@ -63,21 +62,15 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
 
     public function testLogIgnoresLowLogLevel(): void
     {
-        $this->isolator
-            ->expects($this->never())
-            ->method('syslog');
+        $this->syslog->expects($this->never());
 
-        $this->logger = new Logger(__FILE__, LogLevel::INFO);
-
-        $this->logger->setIsolator($this->isolator);
-        $this->logger->debug('This should not be logged.');
+        $logger = new Logger(__FILE__, LogLevel::INFO);
+        $logger->debug('This should not be logged.');
     }
 
     public function testLogOnlyInitsOnce(): void
     {
-        $this->isolator
-            ->expects($this->once())
-            ->method('openlog');
+        $this->openlog->expects($this->once());
 
         $this->logger->info('one');
         $this->logger->info('two');
@@ -85,9 +78,8 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
 
     public function testEmergency(): void
     {
-        $this->isolator
+        $this->syslog
             ->expects($this->once())
-            ->method('syslog')
             ->with(
                 $this->equalTo($this->levels[LogLevel::EMERGENCY]),
                 $this->equalTo('Test emergency message')
@@ -98,9 +90,8 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
 
     public function testAlert(): void
     {
-        $this->isolator
+        $this->syslog
             ->expects($this->once())
-            ->method('syslog')
             ->with(
                 $this->equalTo($this->levels[LogLevel::ALERT]),
                 $this->equalTo('Test alert message')
@@ -111,9 +102,8 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
 
     public function testCritical(): void
     {
-        $this->isolator
+        $this->syslog
             ->expects($this->once())
-            ->method('syslog')
             ->with(
                 $this->equalTo($this->levels[LogLevel::CRITICAL]),
                 $this->equalTo('Test critical message')
@@ -124,9 +114,8 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
 
     public function testError(): void
     {
-        $this->isolator
+        $this->syslog
             ->expects($this->once())
-            ->method('syslog')
             ->with(
                 $this->equalTo($this->levels[LogLevel::ERROR]),
                 $this->equalTo('Test error message')
@@ -137,9 +126,8 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
 
     public function testWarning(): void
     {
-        $this->isolator
+        $this->syslog
             ->expects($this->once())
-            ->method('syslog')
             ->with(
                 $this->equalTo($this->levels[LogLevel::WARNING]),
                 $this->equalTo('Test warning message')
@@ -150,9 +138,8 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
 
     public function testNotice(): void
     {
-        $this->isolator
+        $this->syslog
             ->expects($this->once())
-            ->method('syslog')
             ->with(
                 $this->equalTo($this->levels[LogLevel::NOTICE]),
                 $this->equalTo('Test notice message')
@@ -163,9 +150,8 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
 
     public function testInfo(): void
     {
-        $this->isolator
+        $this->syslog
             ->expects($this->once())
-            ->method('syslog')
             ->with(
                 $this->equalTo($this->levels[LogLevel::INFO]),
                 $this->equalTo('Test info message')
@@ -176,9 +162,8 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
 
     public function testDebug(): void
     {
-        $this->isolator
+        $this->syslog
             ->expects($this->once())
-            ->method('syslog')
             ->with(
                 $this->equalTo($this->levels[LogLevel::DEBUG]),
                 $this->equalTo('Test debug message')
@@ -189,18 +174,21 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
 
     public function testFacility(): void
     {
+        $this->syslog->expects($this->never());
         $this->logger->setFacility(LOG_USER);
         $this->assertEquals(LOG_USER, $this->logger->getFacility());
     }
 
     public function testIdent(): void
     {
+        $this->syslog->expects($this->never());
         $this->logger->setIdent("ProgramName");
         $this->assertEquals("ProgramName", $this->logger->getIdent());
     }
 
     public function testMinimumLogLevel(): void
     {
+        $this->syslog->expects($this->never());
         $this->logger->setMinimumLogLevel("alert");
 
         $this->assertEquals(
@@ -216,9 +204,10 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
 
     public function testOptions(): void
     {
-        $this->logger->setOptions(LOG_PID|LOG_NDELAY|LOG_PERROR);
+        $this->syslog->expects($this->never());
+        $this->logger->setOptions(LOG_PID | LOG_NDELAY | LOG_PERROR);
         $this->assertEquals(
-            LOG_PID|LOG_NDELAY|LOG_PERROR,
+            LOG_PID | LOG_NDELAY | LOG_PERROR,
             $this->logger->getOptions()
         );
     }
