@@ -22,7 +22,7 @@ class Logger extends AbstractLogger
     /**
      * Default values used if not provided in constructor or via setters.
      */
-    const LOG_OPTIONS = LOG_PID;
+    const LOG_OPTIONS  = LOG_PID;
     const LOG_FACILITY = LOG_USER;
 
     /**
@@ -99,7 +99,7 @@ class Logger extends AbstractLogger
      *
      * @return boolean true success | false failure.
      */
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []): bool
     {
         if (self::$levels[$level] > $this->minimumLogLevel) {
             return true;
@@ -120,13 +120,14 @@ class Logger extends AbstractLogger
      *
      * @return boolean true success | false failure
      */
-    private function init()
+    private function init(): bool
     {
         if (!$this->isInit) {
             $this->isInit = true;
 
             return openlog($this->ident, $this->options, $this->facility);
         }
+
         return true;
     }
 
@@ -138,7 +139,7 @@ class Logger extends AbstractLogger
      *
      * @return string The message template with placeholder values substituted.
      */
-    private function substitutePlaceholders($message, array $context)
+    private function substitutePlaceholders($message, array $context): string
     {
         if (false === strpos($message, '{')) {
             return $message;
@@ -147,14 +148,16 @@ class Logger extends AbstractLogger
         foreach ($context as $key => $value) {
             $replacements['{' . $key . '}'] = $value;
         }
+
         return strtr($message, $replacements);
     }
 
     /**
      * Setter.
+     *
      * @param int $facility
      */
-    public function setFacility($facility)
+    public function setFacility($facility): void
     {
         $this->facility = $facility;
     }
@@ -163,16 +166,17 @@ class Logger extends AbstractLogger
      * Getter.
      * @return int
      */
-    public function getFacility()
+    public function getFacility(): int
     {
         return $this->facility;
     }
 
     /**
      * Setter.
+     *
      * @param null|string $ident
      */
-    public function setIdent($ident)
+    public function setIdent($ident): void
     {
         $this->ident = $ident;
     }
@@ -188,9 +192,10 @@ class Logger extends AbstractLogger
 
     /**
      * Setter.
-     * @param mixed
+     *
+     * @param mixed $minimumLogLevel
      */
-    public function setMinimumLogLevel($minimumLogLevel)
+    public function setMinimumLogLevel($minimumLogLevel): void
     {
         if (is_string($minimumLogLevel)) {
             $this->minimumLogLevel = self::$levels[$minimumLogLevel];
@@ -204,7 +209,7 @@ class Logger extends AbstractLogger
      * Getter.
      * @return int
      */
-    public function getMinimumLogLevel()
+    public function getMinimumLogLevel(): int
     {
         return $this->minimumLogLevel;
     }
@@ -220,9 +225,10 @@ class Logger extends AbstractLogger
 
     /**
      * Setter.
+     *
      * @param int $options
      */
-    public function setOptions($options)
+    public function setOptions($options): void
     {
         $this->options = $options;
     }
@@ -231,7 +237,7 @@ class Logger extends AbstractLogger
      * Getter.
      * @return int
      */
-    public function getOptions()
+    public function getOptions(): int
     {
         return $this->options;
     }
